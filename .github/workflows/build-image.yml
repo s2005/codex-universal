@@ -67,7 +67,10 @@ jobs:
       with:
         platforms: linux/amd64,linux/arm64
         push: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
-        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+        tags: |
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}-amd64
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}-arm64
         build-args: |
           PYTHON_VERSION=${{ env.IMAGE_TAG }}
         cache-from: type=gha
@@ -80,3 +83,13 @@ jobs:
         push-to-registry: true
         subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         subject-digest: ${{ steps.docker_build.outputs.digest }}
+    
+    - name: Cleanup old untagged images
+      uses: actions/delete-package-versions@v5
+      if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+      with:
+        package-name: 'codex-python'
+        package-type: 'container'
+        min-versions-to-keep: 10
+        delete-only-untagged-versions: true
+        token: ${{ secrets.GITHUB_TOKEN }}
