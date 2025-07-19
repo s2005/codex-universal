@@ -3,6 +3,11 @@ name: Build Python Image
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'Dockerfile'
+      - 'setup_universal.sh'
+      - 'entrypoint.sh'
+      - '.github/workflows/build-image.yml'
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:

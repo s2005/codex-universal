@@ -1,53 +1,65 @@
-# codex-universal (Python Only)
+# codex-python
 
-`codex-universal` is a Python-focused Docker development environment derived from the base Docker image available in [OpenAI Codex](http://platform.openai.com/docs/codex).
+`codex-python` is a Python-focused Docker development environment that provides a comprehensive Python development setup with multiple Python version support.
 
-This repository provides a streamlined Python development environment with essential tools and multiple Python version support through pyenv.
-
-For more details on environment setup, see [OpenAI Codex](http://platform.openai.com/docs/codex).
+This repository is derived from the [OpenAI codex-universal](https://github.com/openai/codex-universal) base image and has been adapted to focus specifically on Python development with configurable Python versions (3.10, 3.11, 3.12, 3.13).
 
 ## Usage
 
 The Docker image is available at:
 
+```bash
+docker pull ghcr.io/s2005/codex-python:3.12
 ```
-docker pull ghcr.io/openai/codex-universal:latest
+
+You can also use version-specific tags:
+
+```bash
+# Python 3.12 (default)
+docker pull ghcr.io/s2005/codex-python:3.12
+
+# Other Python versions
+docker pull ghcr.io/s2005/codex-python:3.11
+docker pull ghcr.io/s2005/codex-python:3.10
+docker pull ghcr.io/s2005/codex-python:3.13
 ```
 
 The below script shows how you can set up the Python development environment:
 
-```sh
-# See below for environment variable options.
+```bash
 # This script mounts the current directory similar to how it would get cloned in.
 docker run --rm -it \
-    # Mount the current directory similar to how it would get cloned in.
     -v $(pwd):/workspace/$(basename $(pwd)) -w /workspace/$(basename $(pwd)) \
-    ghcr.io/openai/codex-universal:latest
+    ghcr.io/s2005/codex-python:3.12
 ```
 
-`codex-universal` provides a comprehensive Python development environment with multiple Python versions and essential development tools.
+`codex-python` provides a comprehensive Python development environment with multiple Python versions and essential development tools.
 
-### Choosing Python Version
+### Building Different Python Versions
 
-**Default Configuration**: Python 3.12 (Ubuntu 24.04 default)
+The workflow allows building images with different Python versions:
 
-**Multi-Version Support**: Enable multiple Python versions (3.10, 3.11, 3.12, 3.13) when building with external repository access:
+**Via GitHub Actions (Recommended)**:
+
+1. Go to Actions → "Build Python Image" → "Run workflow"
+2. Select your desired Python version: 3.10, 3.11, 3.12, or 3.13
+3. The image will be tagged as `ghcr.io/{owner}/codex-python:{version}`
+
+**Via Manual Build**:
 
 ```bash
-# Build with multiple Python versions enabled (requires external repository access)
-docker build --build-arg ENABLE_MULTI_PYTHON=true -t codex-universal:multi .
+# Build with specific Python version
+docker build --build-arg PYTHON_VERSION=3.11 -t codex-python:3.11 .
 
-# Build with specific Python version as default when multi-version is enabled
-docker build \
-  --build-arg ENABLE_MULTI_PYTHON=true \
-  --build-arg PYTHON_VERSION=3.11 \
-  -t codex-universal:py311 .
+# Build with multiple Python versions enabled (requires external repository access)
+docker build --build-arg ENABLE_MULTI_PYTHON=true -t codex-python:multi .
 
 # Default build (Python 3.12 only, works in restricted networks)
-docker build -t codex-universal:py312 .
+docker build -t codex-python:3.12 .
 ```
 
 **Switching Python versions** (when multi-version is enabled):
+
 ```bash
 # Inside the container
 switch-python 3.11
@@ -102,3 +114,7 @@ The environment includes:
 - **Base system**: Ubuntu 24.04 with development libraries
 
 See [Dockerfile](Dockerfile) for the full details of installed packages.
+
+## Acknowledgments
+
+This project is based on the [OpenAI codex-universal](https://github.com/openai/codex-universal) Docker image. We've adapted it to focus specifically on Python development with enhanced version flexibility and streamlined workflows.
