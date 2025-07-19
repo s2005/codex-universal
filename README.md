@@ -16,7 +16,9 @@ docker pull ghcr.io/openai/codex-universal:latest
 
 The below script shows how you can set up the Python development environment:
 
-```
+```sh
+# See below for environment variable options.
+# This script mounts the current directory similar to how it would get cloned in.
 docker run --rm -it \
     # Mount the current directory similar to how it would get cloned in.
     -v $(pwd):/workspace/$(basename $(pwd)) -w /workspace/$(basename $(pwd)) \
