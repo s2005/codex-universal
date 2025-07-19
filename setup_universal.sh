@@ -2,61 +2,33 @@
 
 set -euo pipefail
 
-CODEX_ENV_PYTHON_VERSION=${CODEX_ENV_PYTHON_VERSION:-}
-CODEX_ENV_NODE_VERSION=${CODEX_ENV_NODE_VERSION:-}
-CODEX_ENV_RUST_VERSION=${CODEX_ENV_RUST_VERSION:-}
-CODEX_ENV_GO_VERSION=${CODEX_ENV_GO_VERSION:-}
-CODEX_ENV_SWIFT_VERSION=${CODEX_ENV_SWIFT_VERSION:-}
+echo "Configuring Python runtime..."
 
-echo "Configuring language runtimes..."
+CURRENT_PYTHON=$(python --version 2>&1 | cut -d' ' -f2)
+echo "# Current Python: ${CURRENT_PYTHON}"
 
-# For Python and Node, always run the install commands so we can install
-# global libraries for linting and formatting. This just switches the version.
-
-# For others (e.g. rust), to save some time on bootup we only install other language toolchains
-# if the versions differ.
-
-if [ -n "${CODEX_ENV_PYTHON_VERSION}" ]; then
-    echo "# Python: ${CODEX_ENV_PYTHON_VERSION}"
-    pyenv global "${CODEX_ENV_PYTHON_VERSION}"
-fi
-
-if [ -n "${CODEX_ENV_NODE_VERSION}" ]; then
-    echo "# Node.js: ${CODEX_ENV_NODE_VERSION}"
-    nvm alias default "${CODEX_ENV_NODE_VERSION}"
-    nvm use "${CODEX_ENV_NODE_VERSION}"
-    corepack enable
-    corepack install -g yarn pnpm npm
-fi
-
-if [ -n "${CODEX_ENV_RUST_VERSION}" ]; then
-    current=$(rustc --version | awk '{print $2}')   # ==> 1.86.0
-    echo "# Rust: ${CODEX_ENV_RUST_VERSION} (default: ${current})"
-    if [ "${current}" != "${CODEX_ENV_RUST_VERSION}" ]; then
-        rustup toolchain install --no-self-update "${CODEX_ENV_RUST_VERSION}"
-        rustup default "${CODEX_ENV_RUST_VERSION}"
-        # Pre-install common linters/formatters
-        # clippy is already installed
+echo "# Available Python versions:"
+VERSIONS_FOUND=false
+for version in 3.10 3.11 3.12 3.13; do
+    if command -v python${version} &> /dev/null; then
+        echo "  - Python ${version} (python${version})"
+        VERSIONS_FOUND=true
     fi
+done
+
+if ! $VERSIONS_FOUND; then
+    echo "  - Python 3.12 (default)"
 fi
 
-if [ -n "${CODEX_ENV_GO_VERSION}" ]; then
-    current=$(go version | awk '{print $3}')   # ==> go1.23.8
-    echo "# Go: go${CODEX_ENV_GO_VERSION} (default: ${current})"
-    if [ "${current}" != "go${CODEX_ENV_GO_VERSION}" ]; then
-        go install "golang.org/dl/go${CODEX_ENV_GO_VERSION}@latest"
-        "go${CODEX_ENV_GO_VERSION}" download
-        # Place new go first in PATH
-        echo "export PATH=$("go${CODEX_ENV_GO_VERSION}" env GOROOT)/bin:\$PATH" >> /etc/profile
-        # Pre-install common linters/formatters
-        golangci-lint --version # Already installed in base image, save us some bootup time
-    fi
+echo "# Available tools: pip, pipx, python3-venv"
+if command -v switch-python &> /dev/null; then
+    echo "# Switch Python versions with: switch-python <version>"
 fi
+echo "# Install additional tools: pipx install poetry uv && pip install ruff black mypy pyright isort"
 
-if [ -n "${CODEX_ENV_SWIFT_VERSION}" ]; then
-    current=$(swift --version | awk -F'version ' '{print $2}' | awk '{print $1}')   # ==> 6.1
-    echo "# Swift: ${CODEX_ENV_SWIFT_VERSION} (default: ${current})"
-    if [ "${current}" != "${CODEX_ENV_SWIFT_VERSION}" ]; then
-        swiftly install --use "${CODEX_ENV_SWIFT_VERSION}"
-    fi
+# Show multi-version status
+if command -v python3.11 &> /dev/null || command -v python3.10 &> /dev/null || command -v python3.13 &> /dev/null; then
+    echo "# Multi-version Python support: ENABLED"
+else
+    echo "# Multi-version Python support: DISABLED (use ENABLE_MULTI_PYTHON=true build arg to enable)"
 fi
