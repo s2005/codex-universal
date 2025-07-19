@@ -19,8 +19,8 @@ You can also use version-specific tags:
 docker pull ghcr.io/s2005/codex-python:3.12
 
 # Other Python versions
-docker pull ghcr.io/s2005/codex-python:3.11
 docker pull ghcr.io/s2005/codex-python:3.10
+docker pull ghcr.io/s2005/codex-python:3.11
 docker pull ghcr.io/s2005/codex-python:3.13
 ```
 
