@@ -115,6 +115,16 @@ The environment includes:
 
 See [Dockerfile](Dockerfile) for the full details of installed packages.
 
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSES/LICENSE) file for details.
+
+The Docker image incorporates various open source components with different licenses (MIT, Apache-2.0, BSD, GPL, etc.). For complete license information and Software Bill of Materials (SBOM), see:
+
+- [LICENSE](LICENSES/LICENSE) - Full license text and component details
+- [SBOM (Markdown)](LICENSES/codex-universal-image-sbom.md) - Human-readable component list  
+- [SBOM (SPDX)](LICENSES/codex-universal-image-sbom.spdx.json) - Machine-readable SPDX format
+
 ## Acknowledgments
 
 This project is based on the [OpenAI codex-universal](https://github.com/openai/codex-universal) Docker image. We've adapted it to focus specifically on Python development with enhanced version flexibility and streamlined workflows.

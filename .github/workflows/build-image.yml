@@ -10,6 +10,11 @@ on:
       - 'docs/**'
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSES/**'
+      - '*.md'
+      - 'docs/**'
   workflow_dispatch:
     inputs:
       python_version:
