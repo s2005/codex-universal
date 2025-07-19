@@ -18,30 +18,24 @@ The below script shows how you can set up the Python development environment:
 
 ```
 docker run --rm -it \
-    # Set Python version (optional)
-    -e CODEX_ENV_PYTHON_VERSION=3.12 \
     # Mount the current directory similar to how it would get cloned in.
     -v $(pwd):/workspace/$(basename $(pwd)) -w /workspace/$(basename $(pwd)) \
     ghcr.io/openai/codex-universal:latest
 ```
 
-`codex-universal` includes setup scripts that look for `CODEX_ENV_PYTHON_VERSION` environment variable and configures the Python version accordingly.
+`codex-universal` provides a comprehensive Python development environment with the latest stable Python version and essential development tools.
 
 ### Configuring Python runtime
 
-The following environment variable can be set to configure Python installation:
-
-| Environment variable       | Description                | Supported versions                               | Additional packages                                                  |
-| -------------------------- | -------------------------- | ------------------------------------------------ | -------------------------------------------------------------------- |
-| `CODEX_ENV_PYTHON_VERSION` | Python version to install  | `3.10`, `3.11.12`, `3.12`, `3.13`                | `pyenv`, `poetry`, `uv`, `ruff`, `black`, `mypy`, `pyright`, `isort` |
+The environment comes pre-configured with Python and essential development tools. No additional configuration is needed.
 
 ## What's included
 
 The environment includes:
 
-- **Python versions**: 3.10, 3.11.12, 3.12, 3.13 (managed via pyenv)
-- **Python package managers**: `poetry`, `uv`, `pip`, `pipx`
-- **Python linting/formatting tools**: `ruff`, `black`, `mypy`, `pyright`, `isort`
+- **Python**: Latest stable version from Ubuntu 24.04 (Python 3.12+)
+- **Python core tools**: `pip`, `python3-venv` for virtual environments
+- **Additional tools**: Can be installed via pip (poetry, uv, ruff, black, mypy, pyright, isort)
 - **Development tools**: `git`, `git-lfs`, `ripgrep`, and essential build tools
 - **Base system**: Ubuntu 24.04 with development libraries
 

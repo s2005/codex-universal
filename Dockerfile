@@ -54,31 +54,16 @@ RUN apt-get update \
 
 ### PYTHON ###
 
-ARG PYENV_VERSION=v2.5.5
-ARG PYTHON_VERSION=3.11.12
-
-# Install pyenv
-ENV PYENV_ROOT=/root/.pyenv
-ENV PATH=$PYENV_ROOT/bin:$PATH
-RUN git config --global http.sslverify false \
-    && git -c advice.detachedHead=0 clone --branch ${PYENV_VERSION} --depth 1 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
-    && git config --global http.sslverify true \
-    && echo 'export PYENV_ROOT="$HOME/.pyenv"' >> /etc/profile \
-    && echo 'export PATH="$$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH"' >> /etc/profile \
-    && echo 'eval "$(pyenv init - bash)"' >> /etc/profile \
-    && cd ${PYENV_ROOT} && src/configure && make -C src \
-    && pyenv install 3.10 3.11.12 3.12 3.13 \
-    && pyenv global ${PYTHON_VERSION}
-# Install pipx for common global package managers (e.g. poetry)
-ENV PIPX_BIN_DIR=/root/.local/bin
-ENV PATH=$PIPX_BIN_DIR:$PATH
-RUN apt-get update && apt-get install -y pipx \
+# Use the default Python 3.12 from Ubuntu 24.04
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        python3 \
+        python3-dev \
+        python3-venv \
+        python3-pip \
     && rm -rf /var/lib/apt/lists/* \
-    && pipx install poetry uv \
-    # Preinstall common packages for each version
-    && for pyv in $(ls ${PYENV_ROOT}/versions/); do \
-        ${PYENV_ROOT}/versions/$pyv/bin/pip install --upgrade pip ruff black mypy pyright isort; \
-    done
+    && ln -sf /usr/bin/python3 /usr/bin/python
+
+# Note: poetry, uv, and other Python tools can be installed via pip once network connectivity is available
 
 
 

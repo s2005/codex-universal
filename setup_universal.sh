@@ -2,13 +2,9 @@
 
 set -euo pipefail
 
-CODEX_ENV_PYTHON_VERSION=${CODEX_ENV_PYTHON_VERSION:-}
-
 echo "Configuring Python runtime..."
 
-if [ -n "${CODEX_ENV_PYTHON_VERSION}" ]; then
-    echo "# Python: ${CODEX_ENV_PYTHON_VERSION}"
-    pyenv global "${CODEX_ENV_PYTHON_VERSION}"
-else
-    echo "# Python: Using default version"
-fi
+PYTHON_VERSION=$(python3 --version | cut -d' ' -f2)
+echo "# Python: ${PYTHON_VERSION} (system default)"
+echo "# Basic tools available: pip, python3-venv"
+echo "# Additional tools like poetry, uv, ruff, black, mypy can be installed via pip"
