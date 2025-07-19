@@ -66,7 +66,7 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         platforms: linux/amd64,linux/arm64
-        push: ${{ github.event_name == 'push' }}
+        push: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
         tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
         build-args: |
           PYTHON_VERSION=${{ env.IMAGE_TAG }}
@@ -75,7 +75,7 @@ jobs:
     
     - name: Generate artifact attestation
       uses: actions/attest-build-provenance@v2
-      if: ${{ github.event_name == 'push' }}
+      if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
       with:
         push-to-registry: true
         subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
